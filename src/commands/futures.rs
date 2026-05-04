@@ -445,13 +445,13 @@ pub(crate) async fn execute(
             to,
         } => {
             validate_path_segment(symbol, "symbol")?;
-            let from_owned;
-            let to_owned;
             let mut params: Vec<(&str, &str)> = Vec::new();
+            let from_owned;
             if let Some(f) = from {
                 from_owned = f.to_string();
                 params.push(("from", &from_owned));
             }
+            let to_owned;
             if let Some(t) = to {
                 to_owned = t.to_string();
                 params.push(("to", &to_owned));
