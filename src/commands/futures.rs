@@ -75,11 +75,7 @@ pub(crate) enum FuturesCommand {
         /// Futures symbol (e.g. PI_XBTUSD).
         symbol: String,
     },
-    /// Get OHLC candle data for a futures contract.
-    ///
-    /// Calls the public charts endpoint
-    /// (`/api/charts/v1/{tick_type}/{symbol}/{resolution}`). Note: candle
-    /// timestamps are in milliseconds since epoch (spot OHLC uses seconds).
+    /// Get OHLC candle data for a futures contract (no auth).
     Ohlc {
         /// Futures symbol (e.g. PF_XBTUSD).
         symbol: String,
@@ -1089,9 +1085,7 @@ fn parse_orderbook(data: &Value) -> CommandOutput {
 
 /// Parse the futures charts OHLC response into Time | Open | High | Low | Close | Volume.
 ///
-/// Response shape: `{"candles": [{"time": <ms>, "open": "...", "high": "...",
-/// "low": "...", "close": "...", "volume": "..."}], "more_candles": <bool>}`.
-/// `time` is in milliseconds since epoch (the spot OHLC endpoint uses seconds).
+/// NOTE: `time` is in millis since epoch (the OHLC endpoint uses seconds).
 fn parse_futures_ohlc(data: &Value) -> CommandOutput {
     let headers = vec![
         "Time".into(),
