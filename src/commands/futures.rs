@@ -1616,4 +1616,58 @@ mod tests {
         let params = build_history_params(None, None, None);
         assert!(params.is_empty());
     }
+
+    #[test]
+    fn parse_futures_ohlc_candle_fields() {
+        // curl -s -i 'https://futures.kraken.com/api/charts/v1/trade/PF_XBTUSD/1d?from=1735689600&to=1735862400'
+        let data = serde_json::json!({
+            "candles": [
+                {
+                    "time": 1735689600000_u64,
+                    "open": "93432",
+                    "high": "95032",
+                    "low": "92651",
+                    "close": "94431",
+                    "volume": "2267.6796"
+                },
+                {
+                    "time": 1735776000000_u64,
+                    "open": "94431",
+                    "high": "97774",
+                    "low": "94210",
+                    "close": "96918",
+                    "volume": "3145.21"
+                }
+            ],
+            "more_candles": false
+        });
+
+        let cmd_out = parse_futures_ohlc(&data);
+
+        assert_eq!(cmd_out.rows.len(), 2);
+
+        assert_eq!(
+            cmd_out.rows[0],
+            vec![
+                "1735689600000",
+                "93432",
+                "95032",
+                "92651",
+                "94431",
+                "2267.6796"
+            ]
+        );
+
+        assert_eq!(
+            cmd_out.rows[1],
+            vec![
+                "1735776000000",
+                "94431",
+                "97774",
+                "94210",
+                "96918",
+                "3145.21"
+            ]
+        );
+    }
 }
