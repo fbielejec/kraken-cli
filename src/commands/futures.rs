@@ -441,6 +441,30 @@ pub(crate) async fn execute(
                 .await?;
             Ok(parse_generic(&data))
         }
+        FuturesCommand::Ohlc {
+            symbol,
+            interval,
+            tick_type,
+            from,
+            to,
+        } => {
+            validate_path_segment(symbol, "symbol")?;
+            let from_owned;
+            let to_owned;
+            let mut params: Vec<(&str, &str)> = Vec::new();
+            if let Some(f) = from {
+                from_owned = f.to_string();
+                params.push(("from", &from_owned));
+            }
+            if let Some(t) = to {
+                to_owned = t.to_string();
+                params.push(("to", &to_owned));
+            }
+            let data = client
+                .public_get_charts(tick_type, symbol, interval, &params, verbose)
+                .await?;
+            Ok(parse_futures_ohlc(&data))
+        }
 
         // === Private commands ===
         FuturesCommand::Accounts => {
